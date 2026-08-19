@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GasyEcole – Activation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0e623b;--navy2:#074528;--navy3:#16804e;
+  --gold:#dc2626;--err:#dc2626;--ok:#16a34a;
+  --bg:#f1f5f9;--white:#fff;--gray2:#e2e8f0;--gray3:#cbd5e1;
+  --t1:#0f172a;--t2:#475569;--t3:#94a3b8;
+  --r:8px;--rl:12px;
+}
+body{
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(150deg,var(--navy2),var(--navy),var(--navy3));
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  color:var(--t1);
+}
+/* Drag de la fenêtre sur la zone vide */
+body{-webkit-app-region:drag}
+input,button,select{-webkit-app-region:no-drag}
+
+.card{
+  background:#fff;border-radius:20px;padding:44px 48px;
+  width:100%;max-width:480px;
+  box-shadow:0 24px 64px rgba(0,0,0,.25);
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.brand-ico{
+  width:46px;height:46px;background:var(--gold);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0
+}
+.brand h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--navy2)}
+.brand p{font-size:11px;color:var(--t3);margin-top:1px}
+
+h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px}
+.subtitle{color:var(--t2);font-size:13px;margin-bottom:28px;line-height:1.5}
+
+/* ID Machine */
+.machine-box{
+  background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:var(--rl);
+  padding:14px 16px;margin-bottom:22px;
+}
+.machine-box label{
+  display:block;font-size:10px;font-weight:700;color:var(--navy);
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px
+}
+.machine-id-row{display:flex;align-items:center;gap:8px}
+.machine-id{
+  font-family:'Courier New',monospace;font-size:18px;font-weight:700;
+  color:var(--navy2);letter-spacing:.15em;flex:1
+}
+.copy-btn{
+  padding:5px 11px;background:var(--navy);color:#fff;border:none;
+  border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;
+  transition:background .15s;white-space:nowrap
+}
+.copy-btn:hover{background:var(--navy3)}
+.copy-btn.copied{background:var(--ok)}
+
+.hint-box{
+  background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--r);
+  padding:11px 14px;margin-bottom:20px;font-size:12px;color:#1e40af;line-height:1.55
+}
+.hint-box strong{display:block;margin-bottom:3px;font-weight:700}
+
+/* Champ clé */
+.fg{margin-bottom:14px}
+.fg label{
+  display:block;font-size:11px;font-weight:700;color:var(--t2);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px
+}
+.fg input{
+  width:100%;padding:11px 14px;border:1.5px solid var(--gray2);
+  border-radius:var(--r);font-size:15px;font-family:'Courier New',monospace;
+  letter-spacing:.1em;outline:none;transition:border .15s;text-transform:uppercase
+}
+.fg input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(14,98,59,.1)}
+.fg input.error{border-color:var(--err);box-shadow:0 0 0 3px rgba(220,38,38,.09)}
+.fg input.success{border-color:var(--ok);box-shadow:0 0 0 3px rgba(22,163,74,.09)}
+
+.msg-err{
+  color:var(--err);font-size:12.5px;padding:9px 12px;
+  background:#fef2f2;border:1px solid #fecaca;border-radius:6px;margin-bottom:12px;
+  display:none
+}
+.msg-ok{
+  color:var(--ok);font-size:12.5px;padding:9px 12px;
+  background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;margin-bottom:12px;
+  display:none
+}
+
+.btn{
+  width:100%;padding:13px;background:var(--navy);color:#fff;border:none;
+  border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;transition:background .15s
+}
+.btn:hover{background:var(--navy3)}
+.btn:disabled{background:var(--gray3);cursor:not-allowed}
+.btn.loading::after{content:' …'}
+
+.footer{margin-top:18px;text-align:center;font-size:11.5px;color:var(--t3)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">
+    <div class="brand-ico">🎓</div>
+    <div>
+      <h1>GasyEcole</h1>
+      <p>Gestion Scolaire</p>
+    </div>
+  </div>
+
+  <h2>Activation requise</h2>
+  <p class="subtitle">Cette application nécessite une licence valide.<br>
+  La demande sera envoyée automatiquement à votre administrateur via Internet.</p>
+
+  <div class="machine-box">
+    <label>Identifiant Machine</label>
+    <div class="machine-id-row">
+      <span class="machine-id" id="machineId">Chargement…</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyId()">Copier</button>
+    </div>
+  </div>
+
+  <div class="hint-box">
+    <strong>📋 Procédure d'activation :</strong>
+    1. Cliquez sur « Demander l'activation ».<br>
+    2. L'administrateur valide cette machine à distance.<br>
+    3. Cliquez sur « Vérifier l'activation ».
+  </div>
+
+  <div class="msg-err" id="msgErr">❌ Clé invalide. Vérifiez la clé ou contactez votre administrateur.</div>
+  <div class="msg-ok" id="msgOk">✅ Activation réussie ! L'application va démarrer…</div>
+
+  <button class="btn" id="activateBtn" onclick="requestActivation()">Demander l'activation</button>
+  <button class="btn" id="checkBtn" onclick="checkActivation()" style="margin-top:10px;background:#16804e">Vérifier l'activation</button>
+
+  <div class="footer">GasyEcole © 2024 — Licence liée à cet ordinateur uniquement</div>
+</div>
+
+<script>
+const api = window.electronAPI
+
+// Charger l'ID machine
+async function loadMachineId() {
+  const id = await api.getMachineId()
+  const el = document.getElementById('machineId')
+  // Affichage formaté XXXX-XXXX-XXXX-XXXX
+  el.textContent = id.match(/.{1,4}/g).join('-')
+  el.dataset.raw = id
+}
+loadMachineId()
+
+function copyId() {
+  const raw = document.getElementById('machineId').dataset.raw || document.getElementById('machineId').textContent
+  navigator.clipboard.writeText(raw).then(() => {
+    const btn = document.getElementById('copyBtn')
+    btn.textContent = 'Copié !'
+    btn.classList.add('copied')
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied') }, 2000)
+  })
+}
+
+async function requestActivation() {
+  const btn = document.getElementById('activateBtn')
+  btn.disabled = true
+  btn.classList.add('loading')
+  btn.textContent = 'Envoi de la demande…'
+  const result = await api.requestActivation()
+  showResult(result)
+  btn.disabled = false
+  btn.classList.remove('loading')
+  btn.textContent = 'Demander l’activation'
+}
+
+async function checkActivation() {
+  const btn = document.getElementById('checkBtn')
+  btn.disabled = true
+  btn.textContent = 'Vérification…'
+  const result = await api.checkActivation()
+  showResult(result)
+  btn.disabled = false
+  btn.textContent = 'Vérifier l’activation'
+}
+
+function showResult(result) {
+  const err = document.getElementById('msgErr')
+  const ok = document.getElementById('msgOk')
+  err.style.display = 'none'
+  ok.style.display = 'none'
+  if (!result.success) {
+    err.textContent = `❌ ${result.error}`
+    err.style.display = 'block'
+  } else if (result.status === 'active') {
+    ok.textContent = '✅ Activation réussie ! L’application va démarrer…'
+    ok.style.display = 'block'
+    setTimeout(() => api.launchApp(), 1200)
+  } else {
+    ok.textContent = '✅ Demande enregistrée. Attendez la validation de l’administrateur puis vérifiez à nouveau.'
+    ok.style.display = 'block'
+  }
+}
+</script>
+</body>
+</html>

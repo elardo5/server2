@@ -1,0 +1,52 @@
+{
+  "name": "@workspace/gasyecole-desktop",
+  "version": "1.0.0",
+  "description": "GasyEcole – Application de Gestion Scolaire (Desktop)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --inspect",
+    "build": "electron-builder",
+    "build:linux": "electron-builder --linux",
+    "build:win": "electron-builder --win",
+    "pack": "electron-builder --dir",
+    "server": "node server/server.js"
+  },
+  "build": {
+    "appId": "mg.gasyecole.app",
+    "productName": "GasyEcole",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "server/**/*"
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Education"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  },
+  "keywords": [
+    "education",
+    "gestion-scolaire",
+    "madagascar"
+  ],
+  "author": "GasyEcole",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  }
+}
