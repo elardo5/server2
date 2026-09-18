@@ -78,8 +78,9 @@ table{width:100%;border-collapse:collapse;margin-top:24px}th,td{text-align:left;
 <main><h1>GasyEcole — Administration</h1>
 <p>Entrez le token administrateur du serveur.</p>
 <input id="token" type="password" placeholder="ADMIN_TOKEN">
-<label style="margin-left:12px">Durée :
-<input id="days" type="number" value="365" min="1" style="width:80px"> jours</label>
+ <label style="margin-left:12px">Durée :
+ <input id="days" type="number" value="365" min="0" style="width:80px"> jours
+ <input id="hours" type="number" value="0" min="0" max="23" style="width:65px"> heures</label>
 <button onclick="load()">Charger les demandes</button>
 <div id="message" class="muted"></div><table><thead><tr>
 <th>Machine</th><th>Client</th><th>Statut</th><th>Demandée le</th><th>Actions</th>
@@ -95,8 +96,12 @@ async function load(){
 }
 async function act(id,action){
  const token=document.getElementById('token').value;
- const days=Number(document.getElementById('days').value)||365;
- const expiresAt=new Date(Date.now()+days*86400000).toISOString();
+ const daysValue=Number(document.getElementById('days').value);
+ const hoursValue=Number(document.getElementById('hours').value);
+ const days=Number.isFinite(daysValue)&&daysValue>=0?Math.floor(daysValue):0;
+ const hours=Number.isFinite(hoursValue)&&hoursValue>=0?Math.min(23,Math.floor(hoursValue)):0;
+ const totalHours=Math.max(1,days*24+hours);
+ const expiresAt=new Date(Date.now()+totalHours*60*60*1000).toISOString();
  await fetch('/admin/licenses/'+encodeURIComponent(id)+'/'+action,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(action==='activate'?{expiresAt}:{} )});
  load();
 }
