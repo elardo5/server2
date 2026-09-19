@@ -16,9 +16,7 @@ const envPath = path.join(__dirname, '..', '.env')
 if (fs.existsSync(envPath)) {
   for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
     const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/)
-    if (match && !process.env[match[1]]) {
-      process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, '')
-    }
+    if (match && !process.env[match[1]]) process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, '')
   }
 }
 
@@ -210,6 +208,12 @@ td {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+
+.client-input {
+  width: 150px;
+  max-width: 150px;
+  padding: 7px;
+}
 </style>
 </head>
 
@@ -370,11 +374,26 @@ async function load() {
       return (
         '<tr>' +
           '<td><code>' + esc(item.machineId) + '</code></td>' +
-          '<td>' + esc(item.customerName || '—') + '</td>' +
+
+          '<td>' +
+            '<input class="client-input" ' +
+              'id="customer-' + esc(item.machineId) + '" ' +
+              'value="' + esc(item.customerName || '') + '" ' +
+              'placeholder="Nom du client">' +
+
+            '<button onclick="saveCustomer(\\'' +
+              esc(item.machineId) +
+            '\\')">' +
+              'Enregistrer' +
+            '</button>' +
+          '</td>' +
+
           '<td class="' + esc(item.status) + '">' +
             esc(item.status) +
           '</td>' +
+
           '<td>' + esc(item.requestedAt) + '</td>' +
+
           '<td class="countdown ' +
             (isExpired ? 'expired' : '') +
             '" data-expires-at="' +
@@ -382,6 +401,7 @@ async function load() {
             '">' +
             formatRemaining(item.expiresAt) +
           '</td>' +
+
           '<td>' +
             activateButton +
             revokeButton +
@@ -398,6 +418,34 @@ async function load() {
   }
 
   countdownTimer = setInterval(refreshCountdowns, 1000)
+}
+
+async function saveCustomer(id) {
+  const token = document.getElementById('token').value
+  const input = document.getElementById('customer-' + id)
+  const customerName = input.value.trim()
+
+  const response = await fetch(
+    '/admin/licenses/' +
+      encodeURIComponent(id) +
+      '/customer',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ customerName })
+    }
+  )
+
+  if (!response.ok) {
+    document.getElementById('message').textContent =
+      'Impossible d’enregistrer le nom du client.'
+    return
+  }
+
+  load()
 }
 
 async function act(id, action) {
@@ -463,7 +511,7 @@ const server = http.createServer(async (req, res) => {
 
   const url = new URL(
     req.url,
-    `http://${req.headers.host}`
+    \`http://\${req.headers.host}\`
   )
 
   try {
@@ -602,7 +650,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     const adminMatch = url.pathname.match(
-      /^\/admin\/licenses\/([^/]+)\/(activate|revoke)$/
+      /^\/admin\/licenses\/([^/]+)\/(activate|revoke|customer)$/
     )
 
     if (
@@ -620,6 +668,18 @@ const server = http.createServer(async (req, res) => {
 
       const action = adminMatch[2]
       const input = await body(req)
+
+      if (action === 'customer') {
+        licenses[machineId].customerName =
+          String(input.customerName || '').trim()
+
+        licenses[machineId].updatedAt =
+          new Date().toISOString()
+
+        save()
+
+        return send(res, 200, licenses[machineId])
+      }
 
       licenses[machineId].status =
         action === 'activate'
@@ -655,6 +715,7 @@ const server = http.createServer(async (req, res) => {
 })
 
 server.listen(PORT, () => {
-  console.log(`Serveur d’activation GasyEcole actif sur le port \${PORT}`
+  console.log(
+    \`Serveur d’activation GasyEcole actif sur le port \${PORT}\`
   )
 })
