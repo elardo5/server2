@@ -509,10 +509,10 @@ const server = http.createServer(async (req, res) => {
     return res.end()
   }
 
-  const url = new URL(
-    req.url,
-    \`http://\${req.headers.host}\`
-  )
+const url = new URL(
+  req.url,
+  `http://\${req.headers.host}`
+)
 
   try {
     if (
@@ -716,6 +716,6 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(
-    \`Serveur d’activation GasyEcole actif sur le port \${PORT}\`
+    `Serveur d’activation GasyEcole actif sur le port \${PORT}`
   )
 })
